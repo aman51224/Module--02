@@ -4,68 +4,87 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.5;
+.menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-:root {
-  --card-background: hsl(240, 33%, 42%);
-  --even-ingredient: rgb(0, 74, 81);
-  --gold: hsl(48, 97%, 48%);
-  --text-color: #ffffff;
-  --category-heading-background: rgb(4, 66, 105);
-  --menu-categories-background: rgb(0, 50, 55);
+.menu-heading {
+  text-align: center;
+  padding-bottom: 1rem;
 }
 
-.menu-card {
-  box-sizing: border-box;
-  background-color: var(--card-background);
-  color: var(--text-color);
-  padding: 20px;
-  border: 10px;
-  border-top: 50px solid var(--gold);
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  justify-content: center;
+  gap: 2rem;
+  padding-inline: 3rem;
 }
 
-.menu-card .menu-categories {
-  margin: 20px;
-  background-color: var(--menu-categories-background);
+.card {
+  width: 300px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0px 4px 5px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.menu-card .menu-categories > p {
-  background-color: var(--category-heading-background);
-  font-size: 25px;
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0px 6px 10px 1px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-body {
+  width: 100%;
+  height: 40%;
+  background-color: #f88484;
+}
+
+.food-name,
+.description,
+.price {
   text-align: center;
 }
 
-h1 {
-  text-align: center;
+@media (min-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.menu-card .menu-content > p {
-  display: inline-block;
+@media (min-width: 1024px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.menu-card .menu-content .price + p {
-  display: block;
-}
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: box-shadow 0.3s ease;
+  }
 
-.price:hover::before {
-  content: "ETB ";
-}
-
-.name {
-  width: 50%;
-}
-
-.menu-card .menu-categories > :nth-child(odd) .description {
-  background-color: var(--even-ingredient);
-}
-
-.menu-card > :last-child .menu-content {
-  margin-block: 5px;
-}
-
-.description {
-  margin: 10px;
+  .card:hover {
+    transform: none;
+  }
 }
