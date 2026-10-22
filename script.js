@@ -1,37 +1,34 @@
 "use strict";
 
-function createLoyalty(earnRule = (etb) => Math.floor(etb / 10)) {
-  let loyaltyPoints = 0;
+import orders from "./orders.js";
+import format, { withVat, VAT, total } from "./pricing.js";
 
-  return {
-    earn(amount) {
-      loyaltyPoints += earnRule(amount);
-    },
-    redeem(points) {
-      loyaltyPoints = Math.max(0, loyaltyPoints - points);
-    },
-    balance() {
-      return loyaltyPoints;
-    },
-  };
+const ordersWithTotal = orders.map((order) => ({
+  ...order,
+  total: total(order),
+}));
+
+// console.log(ordersWithTotal);
+
+const filteredOrders = ordersWithTotal.filter((order) => order.total > 500);
+
+// console.log(filteredOrders);
+
+const formattedOrders = filteredOrders.map((order) => ({
+  name: order.name,
+  total: format(order.total),
+}));
+
+// console.log(formattedOrders);
+
+const grandTotal = filteredOrders.reduce((sum, { total }) => (sum += total), 0);
+// console.log(grandTotal);
+
+function display() {
+  for (const item of formattedOrders) {
+    console.log(`${item.name}: ${item.total}`);
+  }
+  console.log(`Total:${grandTotal.toFixed(2)} ETB`);
 }
 
-const standardCard = createLoyalty();
-
-console.log(standardCard.balance());
-standardCard.earn(100);
-console.log(standardCard.balance());
-standardCard.redeem(2);
-console.log(standardCard.balance());
-standardCard.redeem(23);
-console.log(standardCard.balance());
-
-const plusCard = createLoyalty((amount) => Math.floor(amount / 10) * 2);
-
-console.log(plusCard.balance());
-plusCard.earn(150);
-console.log(plusCard.balance());
-plusCard.redeem(4);
-console.log(plusCard.balance());
-plusCard.redeem(1000);
-console.log(plusCard.balance());
+display();
