@@ -1,11 +1,10 @@
 "use strict";
 
-function vat(amount, rate = 0.15) {
-  return amount * rate;
-}
+const prices = [100, 30, 45, 256, 10, 2550, 2221, 999, 879, 76];
 
-console.log(vat(100));
+const grandTotal = prices
+  .map((price) => price * 1.15)
+  .filter((price) => price < 1000)
+  .reduce((sum, item) => (sum += item), 0);
 
-const myVat = (amount, rate = 0.15) => amount * rate;
-
-console.log(myVat(100));
+console.log(grandTotal);
