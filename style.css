@@ -1,24 +1,50 @@
-body {
-  font-family: sans-serif;
-  padding: 20px;
-}
-
-#list {
-  list-style: none;
+* {
   padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-li {
-  margin-bottom: 8px;
-  cursor: pointer;
+.main-part {
+  display: flex;
+  flex-direction: column;
 }
 
-.done {
-  text-decoration: line-through;
-  color: gray;
+.heading {
+  color: rgb(101, 101, 254);
 }
 
-.del {
-  margin-left: 15px;
-  color: red;
+div {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.div1 {
+  background-color: rgb(255, 80, 80);
+}
+
+.div2 {
+  background-color: rgb(57, 57, 254);
+}
+
+.div3 {
+  background-color: rgb(255, 255, 85);
+}
+
+.div4 {
+  background-color: rgb(55, 255, 55);
+}
+
+ul {
+  width: 100px;
+  height: 100%;
+  background-color: violet;
+}
+
+.div5 {
+  height: auto;
+  background-color: rgb(44, 227, 255);
 }
