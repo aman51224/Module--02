@@ -1,34 +1,54 @@
-"use strict";
+let items = [];
 
-import orders from "./orders.js";
-import format, { withVat, VAT, total } from "./pricing.js";
+const form = document.getElementById("add-form");
+const itemName = document.getElementById("name");
+const count = document.getElementById("count");
+const list = document.getElementById("list");
 
-const ordersWithTotal = orders.map((order) => ({
-  ...order,
-  total: total(order),
-}));
+function render() {
+  list.innerHTML = "";
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item.name;
+    li.dataset.id = item.id;
+    if (item.done) {
+      li.classList.add("done");
+    }
 
-// console.log(ordersWithTotal);
+    const deleteItem = document.createElement("button");
+    deleteItem.textContent = "x";
+    deleteItem.classList.add("del");
+    li.append(deleteItem);
+    list.append(li);
+  });
 
-const filteredOrders = ordersWithTotal.filter((order) => order.total > 500);
-
-// console.log(filteredOrders);
-
-const formattedOrders = filteredOrders.map((order) => ({
-  name: order.name,
-  total: format(order.total),
-}));
-
-// console.log(formattedOrders);
-
-const grandTotal = filteredOrders.reduce((sum, { total }) => (sum += total), 0);
-// console.log(grandTotal);
-
-function display() {
-  for (const item of formattedOrders) {
-    console.log(`${item.name}: ${item.total}`);
-  }
-  console.log(`Total:${grandTotal.toFixed(2)} ETB`);
+  count.textContent = items.length + " items";
 }
 
-display();
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = itemName.value.trim();
+  if (!name) return;
+  items.push({
+    id: Date.now(),
+    name,
+    done: false,
+  });
+  itemName.value = "";
+  render();
+});
+
+list.addEventListener("click", (e) => {
+  const li = e.target.closest("li");
+  if (!li) return;
+  const id = Number(li.dataset.id);
+  if (e.target.matches(".del")) {
+    items = items.filter((item) => item.id !== id);
+  } else {
+    const item = items.find((item) => item.id === id);
+    if (item) {
+      item.done = !item.done;
+    }
+  }
+  render();
+});
