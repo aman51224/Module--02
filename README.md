@@ -1,7 +1,7 @@
-### How loyaltyPoints stays private
+### How to open the page
 
-- we create the variable using let, const or var inside the intended function. let, const and var are function scoped, meaning we can not see the variables created inside the function from outside the function.
+Download the files and open the html file
 
-- create closure by creating functions inside the outer function that manipulate loyaltyPoints. Only through those functions can we access loyaltyPoints.
+### What the page does
 
-This is how we make loyaltyPoints private.
+It allows users to fill in the name and price of an item and it creates a list of the items with the ability to mark them bought or delete them.

@@ -1,41 +1,49 @@
+"use strict";
+
 let items = [];
 
-const form = document.getElementById("add-form");
-const itemName = document.getElementById("name");
-const count = document.getElementById("count");
-const list = document.getElementById("list");
+const form = document.querySelector("#add-form");
+const name = document.querySelector("#name");
+const price = document.querySelector("#price");
+const list = document.querySelector("#list");
+const totalEl = document.querySelector("#total");
 
-function render() {
-  list.innerHTML = "";
-  items.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = item.name;
-    li.dataset.id = item.id;
-    if (item.done) {
-      li.classList.add("done");
-    }
-
-    const deleteItem = document.createElement("button");
-    deleteItem.textContent = "x";
-    deleteItem.classList.add("del");
-    li.append(deleteItem);
-    list.append(li);
+const addRow = (name, price) => {
+  items.push({
+    id: Date.now(),
+    price: price,
   });
 
-  count.textContent = items.length + " items";
-}
+  const li = document.createElement("li");
+  li.textContent = `${name}: ${price} ETB`;
+
+  items.forEach((item) => {
+    li.dataset.id = item.id;
+  });
+
+  li.classList.add("li");
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "x";
+  deleteButton.classList.add("del");
+  li.append(deleteButton);
+  list.append(li);
+};
+
+const updateTotal = () => {
+  const totalPrice = items.reduce((sum, { price }) => (sum += price), 0);
+  totalEl.textContent = `Total Price: ${totalPrice.toFixed(2)}`;
+};
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const name = itemName.value.trim();
-  if (!name) return;
-  items.push({
-    id: Date.now(),
-    name,
-    done: false,
-  });
-  itemName.value = "";
-  render();
+  const itemName = name.value.trim();
+  const itemPrice = Number(price.value);
+
+  if (!itemName || !itemPrice) return;
+
+  addRow(itemName, itemPrice);
+  form.reset();
+  updateTotal();
 });
 
 list.addEventListener("click", (e) => {
@@ -44,11 +52,10 @@ list.addEventListener("click", (e) => {
   const id = Number(li.dataset.id);
   if (e.target.matches(".del")) {
     items = items.filter((item) => item.id !== id);
-  } else {
-    const item = items.find((item) => item.id === id);
-    if (item) {
-      item.done = !item.done;
-    }
+
+    e.target.closest("li").remove();
+    updateTotal();
+  } else if (e.target.matches(".li")) {
+    e.target.classList.toggle("bought");
   }
-  render();
 });
