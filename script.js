@@ -1,61 +1,69 @@
 "use strict";
 
-let items = [];
+const menu = document.getElementById("menu");
+const menuGrid = document.getElementById("menu-grid");
+const refreshButton = document.getElementById("refresh");
 
-const form = document.querySelector("#add-form");
-const name = document.querySelector("#name");
-const price = document.querySelector("#price");
-const list = document.querySelector("#list");
-const totalEl = document.querySelector("#total");
-
-const addRow = (name, price) => {
-  items.push({
-    id: Date.now(),
-    price: price,
-  });
-
-  const li = document.createElement("li");
-  li.textContent = `${name}: ${price} ETB`;
-
-  items.forEach((item) => {
-    li.dataset.id = item.id;
-  });
-
-  li.classList.add("li");
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "x";
-  deleteButton.classList.add("del");
-  li.append(deleteButton);
-  list.append(li);
+const showLoading = () => {
+  menuGrid.textContent = "...Loading";
 };
 
-const updateTotal = () => {
-  const totalPrice = items.reduce((sum, { price }) => (sum += price), 0);
-  totalEl.textContent = `Total Price: ${totalPrice.toFixed(2)}`;
+const showError = () => {
+  menuGrid.textContent = "Could not load the menu";
 };
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const itemName = name.value.trim();
-  const itemPrice = Number(price.value);
+const getDishes = async () => {
+  const response = await fetch(
+    "https://dummyjson.com/recipes?select=name,image",
+  );
 
-  if (!itemName || !itemPrice) return;
-
-  addRow(itemName, itemPrice);
-  form.reset();
-  updateTotal();
-});
-
-list.addEventListener("click", (e) => {
-  const li = e.target.closest("li");
-  if (!li) return;
-  const id = Number(li.dataset.id);
-  if (e.target.matches(".del")) {
-    items = items.filter((item) => item.id !== id);
-
-    e.target.closest("li").remove();
-    updateTotal();
-  } else if (e.target.matches(".li")) {
-    e.target.classList.toggle("bought");
+  if (!response.ok) {
+    throw new Error("HTTP " + response.status);
   }
-});
+
+  const dishes = await response.json();
+  return dishes;
+};
+
+const load = async () => {
+  showLoading();
+  try {
+    const dishes = await getDishes();
+    const dishesList = dishes.recipes;
+    menuGrid.textContent = "";
+    menu.classList.add("menu");
+    menuGrid.classList.add("menu-grid");
+    dishesList.forEach((dish) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      const imageContainer = document.createElement("div");
+      imageContainer.classList.add("image-container");
+      const textContainer = document.createElement("div");
+      textContainer.classList.add("text-container");
+
+      const image = document.createElement("img");
+      image.classList.add("card-image");
+      image.src = dish.image;
+      image.alt = dish.name;
+      image.width = 300;
+      image.height = 300;
+      imageContainer.append(image);
+
+      const name = document.createElement("p");
+      name.textContent = dish.name;
+      name.classList.add("food-name");
+      textContainer.append(name);
+
+      card.append(imageContainer, textContainer);
+      menuGrid.append(card);
+    });
+
+    menu.append(menuGrid);
+  } catch (error) {
+    showError();
+  }
+};
+
+load();
+
+refreshButton.addEventListener("click", load);
