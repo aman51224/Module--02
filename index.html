@@ -4,13 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./styles/style.css" />
-    <title>Document</title>
+    <title>Country Facts</title>
   </head>
   <body>
-    <main id="menu">
-      <div id="menu-grid"></div>
+    <main id="main">
+      <h1 id="heading">Country Facts</h1>
+      <form method="post" id="country-form">
+        <label for="country" id="label">Country:</label>
+        <input
+          type="text"
+          id="country"
+          class="country"
+          placeholder="Ethiopia"
+        />
+        <button type="submit" id="submit-button">Search</button>
+      </form>
+      <section id="facts"></section>
     </main>
-    <button id="refresh">Refresh</button>
     <script src="./js/script.js"></script>
   </body>
 </html>
