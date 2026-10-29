@@ -1,115 +1,115 @@
 "use strict";
 
-const main = document.getElementById("main");
-const heading = document.getElementById("heading");
-const countryForm = document.getElementById("country-form");
-const country = document.getElementById("country");
-const facts = document.getElementById("facts");
+const form = document.getElementById("form");
+const name = document.getElementById("name");
+const email = document.getElementById("email");
+const phone = document.getElementById("phone-number");
+const password = document.getElementById("password");
 
-const render = (out, name, capital, population, region, currencies, flag) => {
-  out.textContent = "";
-  const factsUl = document.createElement("ul");
-  factsUl.classList.add("facts-ul");
-  const nameP = document.createElement("h2");
-  const capitalLi = document.createElement("li");
-  const populationLi = document.createElement("li");
-  const regionLi = document.createElement("li");
-  const currenciesLi = document.createElement("li");
-  const flagLi = document.createElement("li");
+const nameMessage = document.getElementById("name-message");
+const emailMessage = document.getElementById("email-message");
+const phoneMessage = document.getElementById("phone-message");
+const passwordMessage = document.getElementById("password-message");
 
-  name = name.charAt(0).toUpperCase() + name.slice(1);
+const numberOfPeople = document.getElementById("number-of-people");
 
-  nameP.textContent = `Facts about ${name}`;
-  capitalLi.textContent = capital ? `Capital:${capital}` : "Capital: -";
-  populationLi.textContent = population
-    ? `Population: ${population}`
-    : "Population: -";
-  regionLi.textContent = region ? `Region: ${region}` : "Region: -";
-  if (!currencies) {
-    currenciesLi.textContent = "Currencies: -";
-  } else {
-    const currenciesUl = document.createElement("ul");
-    currenciesUl.classList.add("currencies-ul");
-    currenciesLi.textContent = "Currencies:";
-    currencies.forEach((currency) => {
-      const li = document.createElement("li");
-      li.textContent = `${currency.name} (${currency.code}/${currency.symbol})`;
-      currenciesUl.append(li);
-    });
-    currenciesLi.append(currenciesUl);
+let userList = [];
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const nameValue = name.value.trim();
+  const emailValue = email.value.trim();
+  const phoneValue = phone.value.trim();
+  const passwordValue = password.value.trim();
+  const validated = validate(nameValue, emailValue, phoneValue, passwordValue);
+  if (validated) {
+    saveToStorage(nameValue, emailValue, phoneValue, passwordValue);
+    form.reset();
   }
+});
 
-  const flagImg = document.createElement("img");
-  if (!flag) {
-    flagLi.textContent = "-";
-  } else {
-    flagImg.src = flag;
-    flagImg.alt = `Flag of ${name}`;
-    flagLi.textContent = "Flag:";
-    flagLi.append(flagImg);
-  }
-
-  factsUl.append(capitalLi, populationLi, regionLi, currenciesLi, flagLi);
-  out.append(nameP, factsUl);
-};
-
-const checkName = (country, name) => {
-  const countryName = country.name.toLowerCase();
-
-  if (name.length < 3) {
+const validate = (name, email, phoneNumber, password) => {
+  if (name.length < 2) {
+    nameMessage.textContent = "Name should be more than 1 character long";
     return false;
+  } else {
+    nameMessage.textContent = "";
   }
 
-  if (countryName === name) {
-    return true;
+  const emailPattern = /^\w+(?:\.\w+)?@\w+\.\w+$/;
+
+  if (!emailPattern.test(email)) {
+    emailMessage.textContent =
+      "Please enter a valid email address (for example name@example.com)";
+    return false;
+  } else {
+    emailMessage.textContent = "";
   }
 
-  if (countryName.startsWith(name)) {
-    return true;
+  const phoneNumberPattern = /^(?:\+251|0)[79]\d{8}$/;
+
+  if (!phoneNumberPattern.test(phoneNumber)) {
+    phoneMessage.textContent =
+      "Invalid format. Use 09, +2519, 07 or +2517 followed by 8 digits";
+    return false;
+  } else {
+    phoneMessage.textContent = "";
   }
 
-  return false;
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])[^\s]+$/;
+
+  if (password.length < 8) {
+    passwordMessage.textContent =
+      "Password should contain at least eight characters.";
+    return false;
+  } else if (!passwordPattern.test(password)) {
+    passwordMessage.textContent =
+      "Password should contain at least one lower case, one upper case, one digit and one special character";
+    return false;
+  } else {
+    passwordMessage.textContent = "";
+  }
+
+  return true;
 };
 
-const showCountry = async (name) => {
-  facts.textContent = "Loading...";
-  try {
-    const res = await fetch(`https://countries.dev/name/${name}`, {
-      method: "GET",
-    });
-    if (!res.ok) throw new Error(`HTTP: ${res.status} (Not Found)`);
-    const countries = await res.json();
-    const theCountry = countries.find((country) => checkName(country, name));
+const saveToStorage = (name, email, phoneNumber, password) => {
+  const data = {
+    name: name,
+    email: email,
+    phoneNumber: phoneNumber,
+    password: password,
+  };
 
-    if (!theCountry) {
-      facts.textContent = "Country not found.";
-      return;
-    }
-
-    const countryName = theCountry.name;
-    const capital = theCountry.capital;
-    const population = theCountry.population.toLocaleString();
-    const region = theCountry.region;
-    const currencies = theCountry.currencies;
-    const flag = theCountry.flags.png;
-    render(facts, countryName, capital, population, region, currencies, flag);
-  } catch (err) {
-    facts.textContent = "Country not found.";
-    console.log(err.message);
+  console.log(data);
+  const usersKey = "userInformation";
+  let users = localStorage.getItem(usersKey);
+  if (!users) {
+    users = `{ "userData": [] }`;
   }
+
+  const usersObject = JSON.parse(users);
+  console.log(usersObject);
+  let userArray = usersObject.userData;
+  userArray.push(data);
+  console.log(userArray);
+  usersObject.userData = userArray;
+  const userString = JSON.stringify(usersObject);
+  console.log(userString);
+  localStorage.setItem(usersKey, userString);
 };
 
-const getFormData = () => {
-  countryForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let countryName = country.value.trim();
-    if (countryName === "") return;
-    countryName = countryName.toLowerCase();
+window.addEventListener("DOMContentLoaded", (e) => {
+  const usersKey = "userInformation";
+  let users = localStorage.getItem(usersKey);
+  if (!users) {
+    users = `{ "userData": [] }`;
+  }
 
-    showCountry(countryName);
-  });
-};
-
-getFormData();
-
-showCountry("ethiopia");
+  const usersObject = JSON.parse(users);
+  console.log(usersObject);
+  let userArray = usersObject.userData;
+  const count = userArray.length;
+  numberOfPeople.textContent = String(count) + " People have signed up";
+});
