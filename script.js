@@ -5,15 +5,13 @@ const name = document.getElementById("name");
 const email = document.getElementById("email");
 const phone = document.getElementById("phone-number");
 const password = document.getElementById("password");
+const signUpSection = document.getElementById("signed-up");
+const signUpMessage = document.getElementById("sign-up-message");
 
 const nameMessage = document.getElementById("name-message");
 const emailMessage = document.getElementById("email-message");
 const phoneMessage = document.getElementById("phone-message");
 const passwordMessage = document.getElementById("password-message");
-
-const numberOfPeople = document.getElementById("number-of-people");
-
-let userList = [];
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -83,13 +81,10 @@ const saveToStorage = (name, email, phoneNumber, password) => {
   };
 
   console.log(data);
-  const usersKey = "userInformation";
-  let users = localStorage.getItem(usersKey);
-  if (!users) {
-    users = `{ "userData": [] }`;
-  }
 
-  const usersObject = JSON.parse(users);
+  const usersKey = "userInformation";
+
+  const usersObject = loadData(usersKey);
   console.log(usersObject);
   let userArray = usersObject.userData;
   userArray.push(data);
@@ -100,16 +95,47 @@ const saveToStorage = (name, email, phoneNumber, password) => {
   localStorage.setItem(usersKey, userString);
 };
 
-window.addEventListener("DOMContentLoaded", (e) => {
+window.addEventListener("DOMContentLoaded", () => {
   const usersKey = "userInformation";
-  let users = localStorage.getItem(usersKey);
-  if (!users) {
-    users = `{ "userData": [] }`;
-  }
 
-  const usersObject = JSON.parse(users);
+  const usersObject = loadData(usersKey);
   console.log(usersObject);
   let userArray = usersObject.userData;
-  const count = userArray.length;
-  numberOfPeople.textContent = String(count) + " People have signed up";
+  render(userArray);
 });
+
+const loadData = (key) => {
+  try {
+    const users = localStorage.getItem(key);
+    if (!users) {
+      return { userData: [] };
+    }
+
+    const usersObject = JSON.parse(users);
+    return usersObject;
+  } catch (error) {
+    signUpMessage.textContent =
+      "An error has occured while trying to load data";
+    return { userData: [] };
+  }
+};
+
+const render = (users) => {
+  if (!users.length) {
+    signUpMessage.textContent = "No one has signed up yet.";
+    return;
+  }
+
+  signUpMessage.textContent = "";
+
+  const container = document.createElement("div");
+  container.classList.add("signup-container");
+  users.forEach((user) => {
+    const div = document.createElement("div");
+    div.classList.add("user");
+    div.textContent = user.name;
+    container.append(div);
+  });
+
+  signUpSection.append(container);
+};

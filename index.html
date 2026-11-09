@@ -4,17 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./styles/style.css" />
-    <title>Signup Page</title>
+    <title>Sign Up Form</title>
   </head>
   <body>
     <main id="main-page">
+      <h1>Signup Form</h1>
       <form method="post" id="form">
-        <div id="name-div">
+        <div id="name-div" class="input-container">
           <label for="name">Name:</label>
           <input type="text" id="name" required placeholder="John Doe" />
-          <span id="name-message"></span>
+          <span id="name-message" class="message"></span>
         </div>
-        <div id="email-div">
+        <div id="email-div" class="input-container">
           <label for="email">Email:</label>
           <input
             type="email"
@@ -22,9 +23,9 @@
             required
             placeholder="name@example.com"
           />
-          <span id="email-message"></span>
+          <span id="email-message" class="message"></span>
         </div>
-        <div id="phone-div">
+        <div id="phone-div" class="input-container">
           <label for="phone-number">Phone:</label>
           <input
             type="tel"
@@ -32,9 +33,9 @@
             required
             placeholder="0911223344"
           />
-          <span id="phone-message"></span>
+          <span id="phone-message" class="message"></span>
         </div>
-        <div id="password-div">
+        <div id="password-div" class="input-container">
           <label for="password">Password:</label>
           <input
             type="password"
@@ -42,11 +43,14 @@
             required
             placeholder="Enter your password"
           />
-          <span id="password-message"></span>
+          <span id="password-message" class="message"></span>
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" class="submit">Submit</button>
       </form>
-      <p id="number-of-people">0 People have signed up</p>
+      <section id="signed-up" class="signed-up">
+        <h2>People Who Signed Up</h2>
+        <p id="sign-up-message"></p>
+      </section>
     </main>
     <script src="./js/script.js"></script>
   </body>

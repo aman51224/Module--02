@@ -1,3 +1,3 @@
-### To run it, download the project folder and open the index.html file
+- The form is a signup form. When Submit button is clicked we check if each input fulfills some requirement and process data, if not, error message is displayed next to the input fields.
 
-### API used: https://countries.dev
+- To open the page, download the project folder and open the index.html file.
